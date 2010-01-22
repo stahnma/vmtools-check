@@ -1,0 +1,17 @@
+1.  Place the vmware tools rpm package in a yum repo you have available to your systems
+2.  Install this package :)
+
+=How it works=
+1.  Puts a hook in rc.local
+2.  hook checks for the following:
+   - verify runnign in a Vmware vm
+    - is there a newer version of Vmware tools available?  
+      -- if so install it
+    - is there a file telling me current state  (/var/lib/vmtool-status)?
+      -- if no, run vmware-config.pl
+      -- if yes, verify uname -r matches the KERNEL line in /var/lib/vmtool
+         -- if yes, exit
+         -- if no,  run vmware-config and write out new /var/lib/vmtool-status
+
+
+
