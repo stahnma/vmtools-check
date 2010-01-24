@@ -3,4 +3,4 @@
 
 I changed from shell to ruby because I find I like ruby more.  Also, you'll already have ruby on the box if you're using puppet.  If you're not using puppet, there's a decent chance you're doing it wrong.
 
-Let me know if you find any bugs.  Only tested breifly thus far.
+Let me know if you find any bugs.  Only tested briefly thus far.
