@@ -1,5 +1,15 @@
 #!/usr/bin/env ruby
+#
+# Author:: Michael Stahnke (mailto:stahnma@websages.com)
+# Copyright:: (c) 2010 Michael Stahnke
+# License:: WTFPLv2
+#
+#
+# Program designed to keep VMwareTools rpm updated on 
+# RHEL VMware ESX(i) guests.
+#
 
+# Determine if this script is running inside a vmware VM
 def is_vm?()
   vm=`/sbin/lspci -v | grep -i vmware`
   if vm.size() > 0
@@ -8,6 +18,7 @@ def is_vm?()
   return false
 end
 
+# Determines if the VMwareTools is currently installed
 def tools_installed?()
   installed=`rpm -q VMwareTools`
   if $? == 0 
@@ -15,9 +26,10 @@ def tools_installed?()
     return true
   end
   return false
-# update file /var/lib/vmtools-check/status
 end
 
+# Finds the latest version of VMwareTools RPM available in repos
+# and compares that version with the currently installed version
 def tools_current?()
   latest_available=`yum -y -d0 list VMwareTools  | tail -1 | awk '{print $2}'`.to_s.strip()
   current_version=`rpm -q VMwareTools | sed -e "s/VMwareTools-//g"  `.to_s.strip()
@@ -30,12 +42,14 @@ def tools_current?()
   return false;
 end
 
+# Run the actualy command to configure VMwareTools
 def configure_tools()
   puts "Runing configure_tools"
   system("/usr/bin/vmware-config-tools.pl --default")
   puts "Configured tools, reboot to take effect"
 end
 
+# Check to see if the VMwareTools are already configured for this kernel
 def tools_configured?
   puts "Running tools_configured"
   if File.exists?('/etc/vmware-tools/not_configured')
@@ -44,6 +58,7 @@ def tools_configured?
   return true
 end
 
+# Upgrade the VMwareTools 
 def upgrade_tools
   puts "Running upgrade_tools"
   system("yum -y -d0 install VMwareTools")
