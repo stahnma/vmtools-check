@@ -8,6 +8,10 @@
 # Program designed to keep VMwareTools rpm updated on 
 # RHEL VMware ESX(i) guests.
 #
+# Program requires
+# * VMware guest be a RHEL/Centos version with Yum
+# * yum-utils be installed
+# * yum, rpm, awk, grep, tail, sed be in $PATH
 
 # Determine if this script is running inside a vmware VM
 def is_vm?()
