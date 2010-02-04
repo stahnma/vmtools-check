@@ -13,6 +13,24 @@
 # * yum-utils be installed
 # * yum, rpm, awk, grep, tail, sed be in $PATH
 
+
+RED     =  "\033[0;31m"
+GREEN   =  "\033[0;32m"
+YELLOW  =  "\033[0;33m"
+RESET   =  "\e[0m"  
+
+def output(result )
+   if result == 0 
+     puts "\t\t\t\t\t[ #{GREEN}  OK #{RESET} ]"
+   else result != 0
+     puts "\t\t\t\t\t[ #{RED}   FAILED  #{RESET} ]"
+   end
+end
+
+def warn(mesg)
+     puts "\t\t\t\t\t[ #{YELLOW}   #{mesg}  #{RESET} ]"
+end
+
 # Determine if this script is running inside a vmware VM
 def is_vm?()
   vm=`/sbin/lspci -v | grep -i vmware`
@@ -26,7 +44,6 @@ end
 def tools_installed?()
   installed=`rpm -q VMwareTools`
   if $? == 0 
-    #puts "Version installed is #{installed}"
     return true
   end
   return false
@@ -37,12 +54,12 @@ end
 def tools_current?()
   latest_available=`yum -y -d0 list VMwareTools  | tail -1 | awk '{print $2}'`.to_s.strip()
   current_version=`rpm -q VMwareTools | sed -e "s/VMwareTools-//g"  `.to_s.strip()
-  puts "The latest available is #{latest_available}"
-  puts "The current is #{current_version}"
+  puts "Checking to see if VMwareTools are current"
   if (latest_available == current_version) 
-     puts "VMwareTools version correct"
+     output(0)
      return true;
   end
+  warn("Updating")
   return false;
 end
 
@@ -50,15 +67,24 @@ end
 def configure_tools()
   puts "Configuring VMwareTools"
   system("/usr/bin/vmware-config-tools.pl --default")
-  puts "Configured tools, reboot to take effect"
+  output($?)
+  load_network_module
+end
+
+def load_network_module
+  %x{/etc/init.d/network stop; rmmod pcnet32;  rmmod vmxnet }
+  %x{ modprobe vmxnet; /etc/init.d/network start } 
+  output($?)
 end
 
 # Check to see if the VMwareTools are already configured for this kernel
 def tools_configured?
   puts "Verifying Configuration of VMwareTools"
   if File.exists?('/etc/vmware-tools/not_configured')
+    warn "CONFIGURING"
     return false
   end
+  output(0)
   return true
 end
 
@@ -66,11 +92,15 @@ end
 def upgrade_tools
   puts "Running upgrade VMwareTools"
   system("yum -y -d0 install VMwareTools")
+  ouput($?)
 end
 
 if not is_vm?
+  print "System is not a VMware Virtual Machine"
+  output(0)
   exit 0
 end
+puts
 if not  tools_installed? or not tools_current?
     upgrade_tools
 end

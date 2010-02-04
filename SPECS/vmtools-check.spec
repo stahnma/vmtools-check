@@ -9,7 +9,7 @@ URL:            http://github.com/stahnma/vmtools-check
 Source0:        vmtools-check.rb
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:       ruby(api) >= 1.8
+Requires:       ruby >= 1.8.1
 BuildRequires:  ruby-rdoc
 BuildArch:      noarch
 
