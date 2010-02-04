@@ -26,7 +26,7 @@ end
 def tools_installed?()
   installed=`rpm -q VMwareTools`
   if $? == 0 
-    puts "Version installed is #{installed}"
+    #puts "Version installed is #{installed}"
     return true
   end
   return false
@@ -40,7 +40,7 @@ def tools_current?()
   puts "The latest available is #{latest_available}"
   puts "The current is #{current_version}"
   if (latest_available == current_version) 
-     puts "You appear to have the latest version"
+     puts "VMwareTools version correct"
      return true;
   end
   return false;
@@ -48,14 +48,14 @@ end
 
 # Run the actualy command to configure VMwareTools
 def configure_tools()
-  puts "Runing configure_tools"
+  puts "Configuring VMwareTools"
   system("/usr/bin/vmware-config-tools.pl --default")
   puts "Configured tools, reboot to take effect"
 end
 
 # Check to see if the VMwareTools are already configured for this kernel
 def tools_configured?
-  puts "Running tools_configured"
+  puts "Verifying Configuration of VMwareTools"
   if File.exists?('/etc/vmware-tools/not_configured')
     return false
   end
@@ -64,7 +64,7 @@ end
 
 # Upgrade the VMwareTools 
 def upgrade_tools
-  puts "Running upgrade_tools"
+  puts "Running upgrade VMwareTools"
   system("yum -y -d0 install VMwareTools")
 end
 
