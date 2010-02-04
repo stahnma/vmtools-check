@@ -54,7 +54,7 @@ end
 def tools_current?()
   latest_available=`yum -y -d0 list VMwareTools  | tail -1 | awk '{print $2}'`.to_s.strip()
   current_version=`rpm -q VMwareTools | sed -e "s/VMwareTools-//g"  `.to_s.strip()
-  puts "Checking to see if VMwareTools are current"
+  print "Checking to see if VMwareTools are current"
   if (latest_available == current_version) 
      output(0)
      return true;
@@ -65,8 +65,8 @@ end
 
 # Run the actualy command to configure VMwareTools
 def configure_tools()
-  puts "Configuring VMwareTools"
-  system("/usr/bin/vmware-config-tools.pl --default")
+  print "Configuring VMwareTools"
+  system("/usr/bin/vmware-config-tools.pl --default &> /dev/null")
   output($?)
   load_network_module
 end
@@ -79,7 +79,7 @@ end
 
 # Check to see if the VMwareTools are already configured for this kernel
 def tools_configured?
-  puts "Verifying Configuration of VMwareTools"
+  print "Verifying Configuration of VMwareTools"
   if File.exists?('/etc/vmware-tools/not_configured')
     warn "CONFIGURING"
     return false
@@ -90,8 +90,8 @@ end
 
 # Upgrade the VMwareTools 
 def upgrade_tools
-  puts "Running upgrade VMwareTools"
-  system("yum -y -d0 install VMwareTools")
+  print "Running upgrade VMwareTools"
+  system("yum -q -y -d0 install VMwareTools")
   ouput($?)
 end
 

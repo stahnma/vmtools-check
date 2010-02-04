@@ -1,6 +1,6 @@
 Name:           vmtools-check
 Version:        0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Simple utility to verify the VMwareTools setup
 
 Group:          System Environment/Daemons
