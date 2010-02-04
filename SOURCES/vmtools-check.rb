@@ -92,7 +92,7 @@ end
 def upgrade_tools
   print "Running upgrade VMwareTools"
   system("yum -q -y -d0 install VMwareTools")
-  ouput($?)
+  output($?)
 end
 
 if not is_vm?
