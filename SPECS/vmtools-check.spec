@@ -1,6 +1,6 @@
 Name:           vmtools-check
 Version:        20100208
-Release:        5%{?dist}
+Release:        1%{?dist}
 Summary:        Simple utility to verify the VMwareTools setup
 
 Group:          System Environment/Daemons
@@ -22,7 +22,6 @@ Autoupdater for VMwareTools package for RHEL clients
 %prep
 %setup -q
 
-
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/{init.d,rc3.d,rc5.d}
@@ -36,25 +35,26 @@ install -p -m755 vmtools-check.rb  $RPM_BUILD_ROOT%{_libexecdir}/%{name}/
 # This adds the proper /etc/rc*.d links for the script
 /sbin/chkconfig --add %{name}
 
-
 %preun
 if [ $1 = 0 ] ; then
     /sbin/service %{name} stop >/dev/null 2>&1
     /sbin/chkconfig --del %{name}
 fi
 
-
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-
 %files
 %defattr(-,root,root,-)
-%doc doc
+%doc doc README
 %{_sysconfdir}/rc.d/init.d/%{name}
 %{_libexecdir}/%{name}
 
 %changelog
-* Thu Feb 04 2010 <stahnma@fedoraproject.org> - 0.0-1
+* Mon Feb 08 2010 <stahnma@websages.com> - 20100208-1
+- Updated with several fixes
+- Now uses real initscripts 
+- Provides decent init-style output
+
+* Thu Feb 04 2010 <stahnma@websages.com> - 0.0-1
 - Initial Package
