@@ -1,12 +1,12 @@
 Name:           vmtools-check
-Version:        0
-Release:        4%{?dist}
+Version:        20100208
+Release:        5%{?dist}
 Summary:        Simple utility to verify the VMwareTools setup
 
 Group:          System Environment/Daemons
 License:        WTFPL
 URL:            http://github.com/stahnma/vmtools-check
-Source0:        vmtools-check.rb
+Source0:        vmtools-check-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires:       ruby >= 1.8.1
@@ -17,7 +17,7 @@ BuildArch:      noarch
 Autoupdater for VMwareTools package for RHEL clients 
 
 %prep
-cp -f %{SOURCE0} . 
+%setup -q
 
 
 %install

@@ -1,0 +1,6 @@
+1.  Place the vmware tools rpm package in a yum repo you have available to your systems
+2.  Place the ruby file in rc.local or something for now (package is coming), or just run it manually.
+
+I changed from shell to ruby because I find I like ruby more.  Also, you'll already have ruby on the box if you're using puppet.  If you're not using puppet, there's a decent chance you're doing it wrong.
+
+Let me know if you find any bugs.  Only tested briefly thus far.

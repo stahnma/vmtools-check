@@ -1,0 +1,5 @@
+/etc/init.d/network stop 
+rmmod pcnet32 &> /dev/null
+rmmod vmxnet &> /dev/null 
+modprobe vmxnet 
+/etc/init.d/network start

@@ -7,12 +7,11 @@ RPM_DEFINES =   --define "_specdir $(shell pwd)/SPECS" --define "_rpmdir $(shell
 
 MAKE_DIRS= $(shell pwd)/SPECS $(shell pwd)/SOURCES $(shell pwd)/BUILD $(shell pwd)/SRPMS $(shell pwd)/RPMS
 
-VERSION=$(shell cat SPECS/version)
+OLD_VERSION=$(shell grep ^Version $(SPEC_FILE) | awk -F: '{print $$NF}')
+VERSION=$(shell date +"%Y%m%d")
 PKGDIR=$(NAME)-$(VERSION)
 TARBALL=$(PKGDIR).tar.gz
-EXCLUDES=--exclude ".svn" --exclude ".git" --exclude ".gitignore" --exclude "$(TARBALL)" --exclude "*rpm"
-
-
+EXCLUDES=--exclude ".git" --exclude ".gitignore" --exclude "$(TARBALL)" --exclude "*rpm"
 .PHONEY: clean tarball
 
 rpmcheck:
@@ -21,26 +20,32 @@ ifeq ($(RPMBUILD),x)
 endif
 	@mkdir -p $(MAKE_DIRS)
 
-tarball:
-	cd .. ; ln -sf $(NAME) $(PKGDIR); 
-	cd ..; tar -p -c -v -z -h $(EXCLUDES) -f  /tmp/$(TARBALL) $(PKGDIR)
+bumpspec:
+	@sed -i "s/^Version:*$(OLD_VERSION)/Version:        $(VERSION)/" SPECS/vmtools-check.spec
+
+tarball: bumpspec
+	ln -sf SOURCES $(PKGDIR); 
+	tar -p -c -v -z -h $(EXCLUDES) -f  /tmp/$(TARBALL) $(PKGDIR)
 	@mv -f /tmp/$(TARBALL) .
-	@rm -f ../$(PKGDIR)
+	@rm -f $(PKGDIR) 
 
 ## use this to build an srpm locally
-srpm:  rpmcheck
+srpm:  rpmcheck bumpspec tarball
+	@cp -f $(TARBALL) SOURCES
 	@wait
 	$(RPMBUILD) $(RPM_DEFINES)  -bs $(SPEC_FILE)
 	@mv -f SRPMS/* .
-	@rm -rf BUILD SRPMS RPMS
+	@rm -rf BUILD SRPMS RPMS SOURCES/$(TARBALL)
 
 ## use this to build rpm locally
-rpm:   rpmcheck 
+rpm:   rpmcheck  bumpspec tarball
+	#cp -f $(TARBALL) SOURCES
 	@wait
 	$(RPMBUILD) $(RPM_DEFINES) -bb  $(SPEC_FILE)
 	@mv -f RPMS/noarch/* .
+	@rm -f SOURCES/$(TARBALL)
 
 clean:
-	rm -rf BUILD SRPMS RPMS *.rpm *tar.gz doc
+	rm -rf BUILD SRPMS RPMS *.rpm *tar.gz doc 
 
 

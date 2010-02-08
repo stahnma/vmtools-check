@@ -4,6 +4,7 @@
 # Copyright:: (c) 2010 Michael Stahnke
 # License:: WTFPLv2
 #
+#  chkconfig: - 18 80
 #
 # Program designed to keep VMwareTools rpm updated on 
 # RHEL VMware ESX(i) guests.
@@ -21,14 +22,18 @@ RESET   =  "\e[0m"
 
 def output(result )
    if result == 0 
-     puts "\t\t\t\t[ #{GREEN}  OK #{RESET} ]"
+     puts "[ #{GREEN}  OK #{RESET} ]"
    else result != 0
-     puts "\t\t\t\t[ #{RED}   FAILED  #{RESET} ]"
+     puts "[ #{RED}   FAILED  #{RESET} ]"
    end
 end
 
+def mesg(message)
+  printf("%-59s",  message)
+end
+
 def warn(mesg)
-     puts "\t\t\t[ #{YELLOW}   #{mesg}  #{RESET} ]"
+     puts "[ #{YELLOW}   #{mesg}  #{RESET} ]"
 end
 
 # Determine if this script is running inside a vmware VM
@@ -54,32 +59,31 @@ end
 def tools_current?()
   latest_available=`yum -y -d0 list VMwareTools  | tail -1 | awk '{print $2}'`.to_s.strip()
   current_version=`rpm -q VMwareTools | sed -e "s/VMwareTools-//g"  `.to_s.strip()
-  print "Checking to see if VMwareTools are current:"
+  mesg "Checking to see if VMwareTools are current:"
   if (latest_available == current_version) 
      output(0)
      return true;
   end
-  warn("Updating")
+  warn("UPDATING")
   return false;
 end
 
 # Run the actualy command to configure VMwareTools
 def configure_tools()
-  print "Configuring VMwareTools:"
+  mesg "Configuring VMwareTools:"
   system("/usr/bin/vmware-config-tools.pl --default &> /dev/null")
   output($?)
   load_network_module
 end
 
 def load_network_module
-  %x{/etc/init.d/network stop; rmmod pcnet32 &> /dev/null;  rmmod vmxnet &> /dev/null }
-  %x{ modprobe vmxnet; /etc/init.d/network start } 
+  %x{nohup /var/libexec/vmtools-check/network-reload &> /dev/null}
   output($?)
 end
 
 # Check to see if the VMwareTools are already configured for this kernel
 def tools_configured?
-  print "Verifying Configuration of VMwareTools:"
+  mesg "Verifying Configuration of VMwareTools:"
   if File.exists?('/etc/vmware-tools/not_configured')
     warn "CONFIGURING"
     return false
@@ -90,13 +94,13 @@ end
 
 # Upgrade the VMwareTools 
 def upgrade_tools
-  print "Running upgrade VMwareTools:"
-  system("yum -q -y -d0 install VMwareTools")
+  mesg "Running upgrade VMwareTools:"
+  system("yum -q -y -d0 install VMwareTools &> /dev/null")
   output($?)
 end
 
 if not is_vm?
-  print "System is not a VMware Virtual Machine:"
+  mesg "System is not a VMware Virtual Machine:"
   output(0)
   exit 0
 end
