@@ -22,7 +22,7 @@ RESET   =  "\e[0m"
 
 def output(result )
    if result == 0 
-     puts "[ #{GREEN}  OK #{RESET} ]"
+     puts "[ #{GREEN} OK #{RESET} ]"
    else result != 0
      puts "[ #{RED}   FAILED  #{RESET} ]"
    end
@@ -95,7 +95,7 @@ end
 
 # Upgrade the VMwareTools 
 def upgrade_tools
-  mesg "Running upgrade VMwareTools (takes several minutes):"
+  mesg "Starting upgrade of VMwareTools (may take several minutes):"
   system("yum -q -y -d0 install VMwareTools &> /dev/null")
   output($?)
 end
