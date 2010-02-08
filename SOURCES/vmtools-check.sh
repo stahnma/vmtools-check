@@ -2,7 +2,7 @@
 #                                                                                                               
 # vmtools-check    Ensures your VMwareTools package is ok.
 #
-# chkconfig: - 19 80
+# chkconfig: - 345 19 80
 #
 # description: vmtools-check makes sure your VMwareTools package is updaed \ 
 # and configured for the kernel you are running.  If you decide to move \ 
