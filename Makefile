@@ -31,7 +31,7 @@ tarball: bumpspec
 
 ## use this to build an srpm locally
 srpm:  rpmcheck bumpspec tarball
-	@cp -f $(TARBALL) SOURCES
+	cp -f $(TARBALL) SOURCES
 	@wait
 	$(RPMBUILD) $(RPM_DEFINES)  -bs $(SPEC_FILE)
 	@mv -f SRPMS/* .
@@ -39,7 +39,7 @@ srpm:  rpmcheck bumpspec tarball
 
 ## use this to build rpm locally
 rpm:   rpmcheck  bumpspec tarball
-	#cp -f $(TARBALL) SOURCES
+	cp -f $(TARBALL) SOURCES
 	@wait
 	$(RPMBUILD) $(RPM_DEFINES) -bb  $(SPEC_FILE)
 	@mv -f RPMS/noarch/* .

@@ -12,6 +12,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires:       ruby >= 1.8.1
 BuildRequires:  ruby-rdoc
 BuildArch:      noarch
+Requires(post): chkconfig
+Requires(preun):chkconfig
+Requires(preun):initscripts
 
 %description
 Autoupdater for VMwareTools package for RHEL clients 
@@ -22,15 +25,23 @@ Autoupdater for VMwareTools package for RHEL clients
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/{init.d,rc3.d,rc5.d}
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/{init.d,rc3.d,rc5.d}
+mkdir -p $RPM_BUILD_ROOT%{_libexecdir}/%{name}
 rdoc vmtools-check.rb
-install -p -m755 vmtools-check.rb $RPM_BUILD_ROOT%{_sysconfdir}/init.d/vmtools-check
-pwd 
-ls -l
-cd $RPM_BUILD_ROOT%{_sysconfdir}/rc3.d; ln -s ../init.d/vmtools-check S18vmtools-check
-pwd 
-cd $RPM_BUILD_ROOT%{_sysconfdir}/rc5.d; ln -s ../init.d/vmtools-check S18vmtools-check
-ls -l
+install -p -m755 vmtools-check.sh $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/%{name}
+install -p -m755 network-reload  $RPM_BUILD_ROOT%{_libexecdir}/%{name}
+install -p -m755 vmtools-check.rb  $RPM_BUILD_ROOT%{_libexecdir}/%{name}/
+
+%post
+# This adds the proper /etc/rc*.d links for the script
+/sbin/chkconfig --add %{name}
+
+
+%preun
+if [ $1 = 0 ] ; then
+    /sbin/service %{name} stop >/dev/null 2>&1
+    /sbin/chkconfig --del %{name}
+fi
 
 
 
@@ -41,10 +52,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc doc
-%{_sysconfdir}/init.d/vmtools-check
-%{_sysconfdir}/rc3.d/S18vmtools-check
-%{_sysconfdir}/rc5.d/S18vmtools-check
-
+%{_sysconfdir}/rc.d/init.d/%{name}
+%{_libexecdir}/%{name}
 
 %changelog
 * Thu Feb 04 2010 <stahnma@fedoraproject.org> - 0.0-1
