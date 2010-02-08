@@ -44,7 +44,6 @@ case "$1" in
     start|stop|restart|reload|status)
         $1
         ;;
-        ;;
     force-reload|condrestart|try-restart|reload)
         restart
         ;;
