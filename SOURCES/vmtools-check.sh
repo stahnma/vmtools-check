@@ -17,8 +17,7 @@
 . /etc/init.d/functions   
 
 start() {
-        [ ! -f /usr/libexec/vmtools-check/vmtools-check.rb ] && \
-           /usr/libexec/vmtools-check/vmtools-check.rb 
+        /usr/libexec/vmtools-check/vmtools-check.rb 
         RETVAL=$?
         echo
         [ $RETVAL -eq 0 ] 
