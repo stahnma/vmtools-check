@@ -17,8 +17,8 @@
 . /etc/init.d/functions   
 
 start() {
-        [ ! -f /var/libexec/vmtools-check/vmtools-check.rb ] && \
-           /var/libexec/vmtools-check/vmtools-check.rb 
+        [ ! -f /usr/libexec/vmtools-check/vmtools-check.rb ] && \
+           /usr/libexec/vmtools-check/vmtools-check.rb 
         RETVAL=$?
         echo
         [ $RETVAL -eq 0 ] 
@@ -41,13 +41,11 @@ status() {
 }
 
 case "$1" in
-    start|stop|restart|reload)
+    start|stop|restart|reload|status)
         $1
         ;;
-    status)
-        fdrstatus
         ;;
-    force-reload|condrestart|try-restart|reload
+    force-reload|condrestart|try-restart|reload)
         restart
         ;;
     *)

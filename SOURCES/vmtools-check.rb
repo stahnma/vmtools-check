@@ -77,7 +77,7 @@ def configure_tools()
 end
 
 def load_network_module
-  %x{nohup /var/libexec/vmtools-check/network-reload &> /dev/null}
+  %x{nohup /usr/libexec/vmtools-check/network-reload &> /dev/null}
   output($?)
 end
 
