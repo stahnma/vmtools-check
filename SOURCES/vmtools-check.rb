@@ -33,7 +33,7 @@ def mesg(message)
 end
 
 def warn(mesg)
-     puts "[ #{YELLOW}   #{mesg}  #{RESET} ]"
+     puts "[ #{YELLOW}  #{mesg}  #{RESET} ]"
 end
 
 # Determine if this script is running inside a vmware VM
@@ -94,7 +94,7 @@ end
 
 # Upgrade the VMwareTools 
 def upgrade_tools
-  mesg "Running upgrade VMwareTools:"
+  mesg "Running upgrade VMwareTools (takes several minutes):"
   system("yum -q -y -d0 install VMwareTools &> /dev/null")
   output($?)
 end
@@ -104,7 +104,6 @@ if not is_vm?
   output(0)
   exit 0
 end
-puts
 if not  tools_installed? or not tools_current?
     upgrade_tools
 end
